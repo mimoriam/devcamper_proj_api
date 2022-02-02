@@ -24,10 +24,10 @@ const errorHandler = async (err, res, req, next) => {
         error = new ErrorResponse(message, 400);
     }
 
-    res.status(error.statusCode || 500).json({
-        success: false,
-        error: error.message || 'Server Error',
-    });
+    // res.status(error.statusCode || 500).json({
+    //     success: false,
+    //     error: error.message || 'Server Error',
+    // });
 }
 
 module.exports = errorHandler;
