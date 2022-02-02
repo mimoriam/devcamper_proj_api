@@ -13,6 +13,7 @@
     "http-errors": "~1.6.3",
     "mongoose": "^6.1.10",
     "morgan": "~1.9.1",
+    "node-geocoder": "^3.28.0",
     "nodemon": "^2.0.15",
     "pug": "2.0.0-beta11",
     "slugify": "^1.6.5"
