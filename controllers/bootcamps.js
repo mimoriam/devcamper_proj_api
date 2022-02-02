@@ -6,8 +6,21 @@ const geocoder = require('../utils/geocoder');
 // @desc    GET all bootcamps
 // @route   GET /api/v1/bootcamps
 // @access  Public
+// Filtering via: localhost:5000/api/v1/bootcamps?housing=true&location.state=MA
 exports.getBootcamps = asyncHandler(async (req, res, next) => {
-    const bootcamp = await Bootcamp.find();
+
+    let query;
+    // console.log(query);
+    let queryStr = JSON.stringify(req.query);
+    // console.log(queryStr);
+
+    // Redundant for Prisma/Sequelize
+    queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`);
+
+    query = Bootcamp.find(JSON.parse(queryStr));
+
+    // const bootcamp = await Bootcamp.find();
+    const bootcamp = await query;
 
     res.status(200).json({
         success: true,
