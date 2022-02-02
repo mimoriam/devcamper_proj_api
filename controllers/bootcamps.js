@@ -6,18 +6,42 @@ const geocoder = require('../utils/geocoder');
 // @desc    GET all bootcamps
 // @route   GET /api/v1/bootcamps
 // @access  Public
+
 // Filtering via: localhost:5000/api/v1/bootcamps?housing=true&location.state=MA
+// Selecting via: localhost:5000/api/v1/bootcamps?select=name,description,housing&housing=true
+// Sorting via: localhost:5000/api/v1/bootcamps?select=name,description,housing&sort=-name
 exports.getBootcamps = asyncHandler(async (req, res, next) => {
 
     let query;
     // console.log(query);
-    let queryStr = JSON.stringify(req.query);
+
+    // For select sorting:
+    const reqQuery = { ...req.query };
+
+    const removeFields = ['select'];
+    removeFields.forEach(param => delete reqQuery[param]);
+
+    let queryStr = JSON.stringify(reqQuery);
     // console.log(queryStr);
 
-    // Redundant for Prisma/Sequelize
+    // Redundant for Prisma/Sequelize (Create mongoose operators for $gt/$gte etc. )
     queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`);
 
     query = Bootcamp.find(JSON.parse(queryStr));
+
+    // Selecting specific fields to show:
+    if (req.query.select) {
+        const fields = req.query.split(',').join(' ');
+        query = query.select(fields);
+    }
+
+    // Sorting:
+    if (req.query.sort) {
+        const sortBy = req.query.sort.split(',').join(' ');
+        query = query.sort(sortBy);
+    } else {
+        query = query.sort('-createdAt');
+    }
 
     // const bootcamp = await Bootcamp.find();
     const bootcamp = await query;
